@@ -1,6 +1,6 @@
 
 # Homework_15.12.2022_Constructor
-Д/з: Д/з: Телефонная книга
+Д/з: Телефонная книга
 
 <a href="https://gist.github.com/SlavikArt/e0aa261188b5e5e352b25ac8e95a14db">Gist - страница со всеми кодами проектов</a>
 
