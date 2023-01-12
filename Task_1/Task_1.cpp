@@ -8,14 +8,37 @@ private:
     int day;
     int month;
     int year;
+
+    Date(int d);
+    Date(int d, int m);
+
 public:
     Date();
     Date(const Date& d);
     Date(int d, int m, int y);
 
-    void Print();
+    void Print()const;
     void Init();
+
+    int GetDay()const;
+    int GetMonth()const;
+    int GetYear()const;
+
+    void SetDay(int d);
+    void SetMonth(int m);
+    void SetYear(int y);
 };
+
+Date::Date(int d)
+{
+    day = d;
+}
+
+Date::Date(int d, int m) :Date(d)
+{
+    month = m;
+}
+
 
 Date::Date()
 {
@@ -31,14 +54,12 @@ Date::Date(const Date& d)
     year = d.year;
 }
 
-Date::Date(int d, int m, int y)
+Date::Date(int d, int m, int y) :Date(d, m)
 {
-    day = d;
-    month = m;
     year = y;
 }
 
-void Date::Print()
+void Date::Print()const
 {
     cout << "-Birthday: " 
         << day << "." 
@@ -54,6 +75,36 @@ void Date::Init()
     cin >> day >> month >> year;
 }
 
+int Date::GetDay()const
+{
+    return day;
+}
+
+int Date::GetMonth()const
+{
+    return month;
+}
+
+int Date::GetYear()const
+{
+    return year;
+}
+
+void Date::SetDay(int d)
+{
+    day = d;
+}
+
+void Date::SetMonth(int m)
+{
+    month = m;
+}
+
+void Date::SetYear(int y)
+{
+    year = y;
+}
+
 
 class PersonData
 {
@@ -63,19 +114,63 @@ private:
     char* workPhone;
     char* mobilePhone;
     Date birthday;
+    
+    PersonData(const char* flName);
+    PersonData(const char* flName, const char* hmPhone);
+    PersonData(const char* flName, const char* hmPhone, const char* wkPhone);
+    PersonData(const char* flName, const char* hmPhone, const char* wkPhone, const char* mobPhone);
+
 public:
     PersonData();
-    PersonData(const char* flName, const char* hmPhone, const char* wkPhone, const char* mobPhone, Date brthd);
     PersonData(const PersonData& pd);
+    PersonData(const char* flName, const char* hmPhone, const char* wkPhone, const char* mobPhone, Date brthd);
+    
     ~PersonData();
 
-    void Print();
+    void Print()const;
     void Init();
 
-    char* GetName();
+    char* GetName()const;
+    char* GetHomePhone()const;
+    char* GetWorkPhone()const;
+    char* GetMobilePhone()const;
+
+    void SetName(const char* flName);
+    void SetHomePhone(const char* hmPhone);
+    void SetWorkPhone(const char* wkPhone);
+    void SetMobilePhone(const char* mobPhone);
+    void SetDate(Date brthd);
 
     void operator = (const PersonData& pd);
 };
+
+PersonData::PersonData(const char* flName)
+{
+    fullName = new char[strlen(flName) + 1];
+    strcpy_s(fullName, strlen(flName) + 1, flName);
+}
+
+PersonData::PersonData(const char* flName, const char* hmPhone)
+    :PersonData(flName)
+{
+    homePhone = new char[strlen(hmPhone) + 1];
+    strcpy_s(homePhone, strlen(hmPhone) + 1, hmPhone);
+}
+
+PersonData::PersonData(const char* flName, const char* hmPhone, const char* wkPhone)
+    :PersonData(flName, hmPhone)
+{
+    workPhone = new char[strlen(wkPhone) + 1];
+    strcpy_s(workPhone, strlen(wkPhone) + 1, wkPhone);
+}
+
+PersonData::PersonData(const char* flName, const char* hmPhone, const char* wkPhone, const char* mobPhone)
+    :PersonData(flName, hmPhone, wkPhone)
+{
+    mobilePhone = new char[strlen(mobPhone) + 1];
+    strcpy_s(mobilePhone, strlen(mobPhone) + 1, mobPhone);
+}
+
 
 PersonData::PersonData()
 {
@@ -84,23 +179,6 @@ PersonData::PersonData()
     workPhone = nullptr;
     mobilePhone = nullptr;
     birthday = Date();
-}
-
-PersonData::PersonData(const char* flName, const char* hmPhone, const char* wkPhone, const char* mobPhone, Date brthd)
-{
-    fullName = new char[strlen(flName) + 1];
-    strcpy_s(fullName, strlen(flName) + 1, flName);
-
-    homePhone = new char[strlen(hmPhone) + 1];
-    strcpy_s(homePhone, strlen(hmPhone) + 1, hmPhone);
-
-    workPhone = new char[strlen(wkPhone) + 1];
-    strcpy_s(workPhone, strlen(wkPhone) + 1, wkPhone);
-
-    mobilePhone = new char[strlen(mobPhone) + 1];
-    strcpy_s(mobilePhone, strlen(mobPhone) + 1, mobPhone);
-
-    birthday = brthd;
 }
 
 PersonData::PersonData(const PersonData& pd)
@@ -132,6 +210,12 @@ PersonData::PersonData(const PersonData& pd)
     this->birthday = pd.birthday;
 }
 
+PersonData::PersonData(const char* flName, const char* hmPhone, const char* wkPhone, const char* mobPhone, Date brthd)
+    :PersonData(flName, hmPhone, wkPhone, mobPhone)
+{
+    birthday = brthd;
+}
+
 PersonData::~PersonData()
 {
     delete[] fullName;
@@ -140,7 +224,7 @@ PersonData::~PersonData()
     delete[] mobilePhone;
 }
 
-void PersonData::Print()
+void PersonData::Print()const
 {   
     if (fullName != nullptr)
         cout << fullName << " phone numbers:\n";
@@ -228,9 +312,65 @@ void PersonData::Init()
     system("cls");
 }
 
-char* PersonData::GetName()
+char* PersonData::GetName()const
 {
     return fullName;
+}
+
+char* PersonData::GetHomePhone()const
+{
+    return homePhone;
+}
+
+char* PersonData::GetWorkPhone()const
+{
+    return workPhone;
+}
+
+char* PersonData::GetMobilePhone()const
+{
+    return mobilePhone;
+}
+
+void PersonData::SetName(const char* flName)
+{
+    if (fullName != nullptr)
+        delete[] fullName;
+
+    fullName = new char[strlen(flName) + 1];
+    strcpy_s(fullName, strlen(flName) + 1, flName);
+}
+
+void PersonData::SetHomePhone(const char* hmPhone)
+{
+    if (this->homePhone != nullptr)
+        delete[] this->homePhone;
+
+    homePhone = new char[strlen(hmPhone) + 1];
+    strcpy_s(homePhone, strlen(hmPhone) + 1, hmPhone);
+}
+
+void PersonData::SetWorkPhone(const char* wkPhone)
+{
+    if (this->workPhone != nullptr)
+        delete[] this->workPhone;
+
+    workPhone = new char[strlen(wkPhone) + 1];
+    strcpy_s(workPhone, strlen(wkPhone) + 1, wkPhone);
+}
+
+void PersonData::SetMobilePhone(const char* mobPhone)
+{
+    if (this->mobilePhone != nullptr)
+        delete[] this->mobilePhone;
+
+    mobilePhone = new char[strlen(mobPhone) + 1];
+    strcpy_s(mobilePhone, strlen(mobPhone) + 1, mobPhone);
+}
+
+void PersonData::SetDate(Date brthd)
+{
+    birthday = brthd;
 }
 
 void PersonData::operator = (const PersonData& pd)
@@ -268,24 +408,37 @@ class PhoneBook
 private:
     PersonData* persons;
     int length;
+
+    PhoneBook(int len);
+
 public:
     PhoneBook();
     PhoneBook(PersonData* prsns, int len);
     PhoneBook(const PhoneBook& pb);
+
     ~PhoneBook();
 
-    void Print();
-    void PrintNames();
+    void Print()const;
+    void PrintNames()const;
 
     void AddPersonData();
     void AddPersonData(const PersonData& obj);
     void DeletePerson(int index);
     void Search(char* sName);
 
-    int GetSize();
+    int GetSize()const;
+    PersonData* GetPersons()const;
+
+    void SetPersons(PersonData* prsns, int len);
 
     void operator = (const PhoneBook& pb);
 };
+
+PhoneBook::PhoneBook(int len)
+{
+    length = len;
+}
+
 
 PhoneBook::PhoneBook()
 {
@@ -294,11 +447,11 @@ PhoneBook::PhoneBook()
 }
 
 PhoneBook::PhoneBook(PersonData* prsns, int len)
+    :PhoneBook(len)
 {
-    length = len;
-    persons = new PersonData[len];
+    persons = new PersonData[length];
 
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < length; i++)
     {
         persons[i] = prsns[i];
     }
@@ -320,7 +473,7 @@ PhoneBook::~PhoneBook()
     delete[] persons;
 }
 
-void PhoneBook::Print()
+void PhoneBook::Print()const
 {
     for (int i = 0; i < length; i++)
     {
@@ -329,7 +482,7 @@ void PhoneBook::Print()
     }
 }
 
-void PhoneBook::PrintNames()
+void PhoneBook::PrintNames()const
 {
     for (int i = 0; i < length; i++)
     {
@@ -420,9 +573,29 @@ void PhoneBook::Search(char* sName)
     }
 }
 
-int PhoneBook::GetSize()
+int PhoneBook::GetSize()const
 {
     return length;
+}
+
+PersonData* PhoneBook::GetPersons()const
+{
+    return persons;
+}
+
+void PhoneBook::SetPersons(PersonData* prsns, int len)
+{
+    if (persons != nullptr)
+        delete[] persons;
+
+    length = len;
+
+    persons = new PersonData[length];
+
+    for (int i = 0; i < length; i++)
+    {
+        persons[i] = prsns[i];
+    }
 }
 
 void PhoneBook::operator = (const PhoneBook& pb)
@@ -621,5 +794,6 @@ int main()
             break;
         }
     }
+
     delete[] pds;
 }
