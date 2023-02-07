@@ -27,6 +27,8 @@ public:
     void SetDay(int d);
     void SetMonth(int m);
     void SetYear(int y);
+
+    friend ostream& operator << (ostream& o, const Date& d);
 };
 
 Date::Date(int d)
@@ -105,6 +107,15 @@ void Date::SetYear(int y)
     year = y;
 }
 
+ostream& operator << (ostream& o, const Date& d)
+{
+    o << "-Birthday: "
+        << d.day << "."
+        << d.month << "."
+        << d.year << "\n";
+    return o;
+}
+
 
 class PersonData
 {
@@ -142,6 +153,7 @@ public:
     void SetDate(Date brthd);
 
     void operator = (const PersonData& pd);
+    friend ostream& operator << (ostream& o, const PersonData& pd);
 };
 
 PersonData::PersonData(const char* flName)
@@ -402,6 +414,33 @@ void PersonData::operator = (const PersonData& pd)
     this->birthday = pd.birthday;
 }
 
+ostream& operator << (ostream& o, const PersonData& pd)
+{
+    if (pd.fullName != nullptr)
+        cout << pd.fullName << " phone numbers:\n";
+    else
+        cout << "None phone numbers:\n";
+
+    if (pd.homePhone != nullptr)
+        cout << "-Home phone: " << pd.homePhone << "\n";
+    else
+        cout << "-Home phone: None\n";
+
+    if (pd.workPhone != nullptr)
+        cout << "-Work phone: " << pd.workPhone << "\n";
+    else
+        cout << "-Work phone: None\n";
+
+    if (pd.mobilePhone != nullptr)
+        cout << "-Mobile phone: " << pd.mobilePhone << "\n";
+    else
+        cout << "-Mobile phone: None\n";
+
+    o << pd.birthday;
+
+    return o;
+}
+
 
 class PhoneBook
 {
@@ -431,7 +470,10 @@ public:
 
     void SetPersons(PersonData* prsns, int len);
 
-    void operator = (const PhoneBook& pb);
+    PhoneBook& operator = (const PhoneBook& pb);
+    friend ostream& operator << (ostream& o, const PhoneBook& pb);
+
+    PersonData& operator[](int index);
 };
 
 PhoneBook::PhoneBook(int len)
@@ -598,18 +640,40 @@ void PhoneBook::SetPersons(PersonData* prsns, int len)
     }
 }
 
-void PhoneBook::operator = (const PhoneBook& pb)
+PhoneBook& PhoneBook::operator = (const PhoneBook& pb)
 {
-    if (this->persons != nullptr)
-        delete[] this->persons;
+    if (&pb != this)
+    {
+        if (this->persons != nullptr)
+            delete[] this->persons;
 
-    length = pb.length;
-    persons = new PersonData[pb.length];
+        length = pb.length;
+        persons = new PersonData[length];
 
+        for (int i = 0; i < length; i++)
+        {
+            persons[i] = pb.persons[i];
+        }
+    }
+    return *this;
+}
+
+ostream& operator << (ostream& o, const PhoneBook& pb)
+{
     for (int i = 0; i < pb.length; i++)
     {
-        persons[i] = pb.persons[i];
+        o << pb.persons[i];
+        o << "--------------------------------\n";
     }
+    return o;
+}
+
+PersonData& PhoneBook::operator[](int index)
+{
+    if (index < this->length)
+        return this->persons[index];
+    else
+        throw "Invalid index :(";
 }
 
 PersonData RandomPersonData()
@@ -683,7 +747,7 @@ int main()
 
             cout << "--------------------------------\n";
 
-            db.Print();
+            cout << db;
 
             cout << "\n";
             break;
